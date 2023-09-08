@@ -21,18 +21,22 @@ jobs:
         env:
           CONFIGURL_LINUX: ${{ secrets.CONFIGURL_LINUX }}
       - name: Vlan Init Test
+        if: ${{ always() }}
         run: |
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
       - name: Vlan Stop Test
+        if: ${{ always() }}
         run: |
           sudo vlan -service stop  || true
           bash pingTest.sh reverse
       - name: Vlan Start Test
+        if: ${{ always() }}
         run: |
           sudo vlan -service start  || true
           bash pingTest.sh
       - name: Vlan Update Test
+        if: ${{ always() }}
         run: |
           sudo vlan -service stop  || true
           sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/linux-amd64/installer -O /usr/local/bin/vl-update
@@ -42,6 +46,7 @@ jobs:
         run: bash pingTest.sh
       
       - name: License Sign Test
+        if: ${{ always() }}
         run: |
           wget https://gitcode.net/to/vlan/-/raw/master/linux-amd64/licenser
           chmod +x licenser
@@ -51,6 +56,7 @@ jobs:
           sed -i 's/HIPER/VLAN/g' ca.key
           ./licenser sign -ca-crt ca.crt -ca-key ca.key -out-crt test.crt -out-key test.key -ip "10.10.10.10/28" -names "test"
       - name: License Print Test
+        if: ${{ always() }}
         run: |
           ./licenser print -path ca.crt
           ./licenser print -path test.crt
@@ -75,27 +81,33 @@ jobs:
         env:
           CONFIGURL_MACOS: ${{ secrets.CONFIGURL_MACOS }}
       - name: Vlan Init Test
+        if: ${{ always() }}
         run: |
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
       - name: Vlan Stop Test
+        if: ${{ always() }}
         run: |
           sudo vlan -service stop  || true
           bash pingTest.sh reverse
       - name: Vlan Start Test
+        if: ${{ always() }}
         run: |
           sudo vlan -service start  || true
           bash pingTest.sh
       - name: Vlan Update Test
+        if: ${{ always() }}
         run: |
           sudo vlan -service stop  || true
           sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/darwin-amd64/installer -O /usr/local/bin/vl-update
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
       - name: Networking Test
+        if: ${{ always() }}
         run: bash pingTest.sh
       
       - name: License Sign Test
+        if: ${{ always() }}
         run: |
           wget https://gitcode.net/to/vlan/-/raw/master/darwin-amd64/licenser
           chmod +x licenser
@@ -105,6 +117,7 @@ jobs:
           sed -i 's/HIPER/VLAN/g' ca.key
           ./licenser sign -ca-crt ca.crt -ca-key ca.key -out-crt test.crt -out-key test.key -ip "10.10.10.10/28" -names "test"
       - name: License Print Test
+        if: ${{ always() }}
         run: |
           ./licenser print -path ca.crt
           ./licenser print -path test.crt
