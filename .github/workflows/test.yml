@@ -84,27 +84,27 @@ jobs:
         if: ${{ always() }}
         run: |
           vl-update.exe -config C:\\Windows\\System32\\config.yml
-          pingTest.bat
+          .\pingTest.bat
       - name: Vlan Stop Test
         if: ${{ always() }}
         run: |
           vlan.exe -service stop
-          pingTest.bat reverse
+          .\pingTest.bat reverse
       - name: Vlan Start Test
         if: ${{ always() }}
         run: |
           vlan.exe -service start
-          pingTest.bat
+          .\pingTest.bat
       - name: Vlan Update Test
         if: ${{ always() }}
         run: |
           vlan.exe -service start
           Invoke-WebRequest -Uri https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/windows-amd64/installer.exe -OutFile C:\\\Windows\\System32\\vlan.exe
           vl-update -config C:\\Windows\\System32\\config.yml
-          pingTest.bat
+          .\pingTest.bat
       - name: Networking Test
         if: ${{ always() }}
-        run: pingTest.bat
+        run: .\pingTest.bat
       
       - name: License Sign Test
         if: ${{ always() }}
@@ -170,8 +170,8 @@ jobs:
           chmod +x licenser
           wget https://gitcode.net/qq_35359540/HiperBackup/-/raw/master/ca/ca.crt
           wget https://gitcode.net/qq_35359540/HiperBackup/-/raw/master/ca/ca.key
-          sed -i 's/HIPER/VLAN/g' ca.crt
-          sed -i 's/HIPER/VLAN/g' ca.key
+          sed -i'' -e 's/HIPER/VLAN/g' ca.crt
+          sed -i'' -e 's/HIPER/VLAN/g' ca.key
           ./licenser sign -ca-crt ca.crt -ca-key ca.key -out-crt test.crt -out-key test.key -ip "10.10.10.10/28" -names "test"
       - name: License Print Test
         if: ${{ always() }}
