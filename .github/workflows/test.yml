@@ -98,7 +98,7 @@ jobs:
       - name: Vlan Update Test
         if: ${{ always() }}
         run: |
-          vlan.exe -service start
+          vlan.exe -service stop
           Invoke-WebRequest -Uri https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/windows-amd64/installer.exe -OutFile C:\\\Windows\\System32\\vlan.exe
           vl-update -config C:\\Windows\\System32\\config.yml
           .\pingTest.bat
