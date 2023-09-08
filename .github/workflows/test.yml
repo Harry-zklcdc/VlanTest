@@ -43,6 +43,7 @@ jobs:
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
       - name: Networking Test
+        if: ${{ always() }}
         run: bash pingTest.sh
       
       - name: License Sign Test
@@ -59,6 +60,9 @@ jobs:
         if: ${{ always() }}
         run: |
           ./licenser print -path ca.crt
+          echo ""
+          echo "----------------------------"
+          echo ""
           ./licenser print -path test.crt
 
   test_windows:
@@ -66,6 +70,59 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Set as Administrator
+        run: |
+          (New-Object System.Net.WebClient).DownloadFile('https://get.scoop.sh', 'scoop.ps1') 
+          ./scoop.ps1 -RunAsAdmin
+      - name: Set up Vlan
+        run: |
+          Invoke-WebRequest -Uri https://gitcode.net/to/vlan/-/raw/master/windows-amd64/installer.exe -OutFile C:\\\Windows\\System32\\vl-update.exe
+          Invoke-WebRequest -Uri $Env:CONFIGURL_WINDOWS -OutFile C:\\Windows\\System32\\config.yml
+        env:
+          CONFIGURL_WINDOWS: ${{ secrets.CONFIGURL_WINDOWS }}
+      - name: Vlan Init Test
+        if: ${{ always() }}
+        run: |
+          vl-update.exe -config C:\\Windows\\System32\\config.yml
+          pingTest.bat
+      - name: Vlan Stop Test
+        if: ${{ always() }}
+        run: |
+          vlan.exe -service stop
+          pingTest.bat reverse
+      - name: Vlan Start Test
+        if: ${{ always() }}
+        run: |
+          vlan.exe -service start
+          pingTest.bat
+      - name: Vlan Update Test
+        if: ${{ always() }}
+        run: |
+          vlan.exe -service start
+          Invoke-WebRequest -Uri https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/windows-amd64/installer.exe -OutFile C:\\\Windows\\System32\\vlan.exe
+          vl-update -config C:\\Windows\\System32\\config.yml
+          pingTest.bat
+      - name: Networking Test
+        if: ${{ always() }}
+        run: pingTest.bat
+      
+      - name: License Sign Test
+        if: ${{ always() }}
+        run: |
+          Invoke-WebRequest -Uri https://gitcode.net/to/vlan/-/raw/master/windows-amd64/licenser.exe -OutFile licenser.exe
+          Invoke-WebRequest -Uri https://gitcode.net/qq_35359540/HiperBackup/-/raw/master/ca/ca.crt -OutFile ca.crt
+          Invoke-WebRequest -Uri https://gitcode.net/qq_35359540/HiperBackup/-/raw/master/ca/ca.key -OutFile ca.key
+          (Get-Content ca.crt) -Replace 'HIPER', 'VLAN' | Set-Content ca.crt
+          (Get-Content ca.key) -Replace 'HIPER', 'VLAN' | Set-Content ca.key
+          ./licenser.exe sign -ca-crt ca.crt -ca-key ca.key -out-crt test.crt -out-key test.key -ip "10.10.10.10/28" -names "test"
+      - name: License Print Test
+        if: ${{ always() }}
+        run: |
+          ./licenser.exe print -path ca.crt
+          echo ""
+          echo "----------------------------"
+          echo ""
+          ./licenser.exe print -path test.crt
 
   test_macos:
     name: Test MacOS
@@ -120,4 +177,7 @@ jobs:
         if: ${{ always() }}
         run: |
           ./licenser print -path ca.crt
+          echo ""
+          echo "----------------------------"
+          echo ""
           ./licenser print -path test.crt
