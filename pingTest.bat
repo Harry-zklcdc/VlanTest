@@ -7,7 +7,7 @@ goto testSuccess
 
 
 :testSuccess
-ping 11.192.168.6
+ping -n 10 -w 1000 11.192.168.6
 if %ERRORLEVEL% == 0 (
     echo ping ok
     exit 0
@@ -19,7 +19,7 @@ if %ERRORLEVEL% == 1 (
 goto:eof
 
 :testFail
-ping 11.192.168.6
+ping -n 10 -w 1000 11.192.168.6
 if %ERRORLEVEL% == 0 (
     echo ping ok
     exit 1
