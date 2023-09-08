@@ -1,5 +1,5 @@
 testSuccess(){
-    ping -c 4 -w 4 11.192.168.1
+    ping -c 4 11.192.168.1
     if [[ $? != 0 ]]; then
         echo "ping fail"
         exit 1
@@ -10,7 +10,7 @@ testSuccess(){
 }
 
 testFail(){
-    ping -c 4 -w 4 11.192.168.1
+    ping -c 4 11.192.168.1
     if [[ $? != 0 ]]; then
         echo "ping fail"
         exit 0
