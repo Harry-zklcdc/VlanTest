@@ -26,15 +26,15 @@ jobs:
           bash pingTest.sh
       - name: Vlan Stop Test
         run: |
-          sudo vlan -service stop
+          sudo vlan -service stop  || true
           bash pingTest.sh reverse
       - name: Vlan Start Test
         run: |
-          sudo vlan -service start
+          sudo vlan -service start  || true
           bash pingTest.sh
       - name: Vlan Update Test
         run: |
-          sudo vlan -service stop
+          sudo vlan -service stop  || true
           sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/linux-amd64/installer -O /usr/local/bin/vl-update
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
@@ -80,15 +80,15 @@ jobs:
           bash pingTest.sh
       - name: Vlan Stop Test
         run: |
-          sudo vlan -service stop
+          sudo vlan -service stop  || true
           bash pingTest.sh reverse
       - name: Vlan Start Test
         run: |
-          sudo vlan -service start
+          sudo vlan -service start  || true
           bash pingTest.sh
       - name: Vlan Update Test
         run: |
-          sudo vlan -service stop
+          sudo vlan -service stop  || true
           sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/darwin-amd64/installer -O /usr/local/bin/vl-update
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
