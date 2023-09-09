@@ -39,7 +39,7 @@ jobs:
         if: ${{ always() }}
         run: |
           sudo vlan -service stop  || true
-          sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/linux-amd64/installer -O /usr/local/bin/vl-update
+          sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/linux-amd64/installer -O /usr/local/bin/vlan
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
       - name: Networking Test
@@ -156,7 +156,7 @@ jobs:
         if: ${{ always() }}
         run: |
           sudo vlan -service stop  || true
-          sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/darwin-amd64/installer -O /usr/local/bin/vl-update
+          sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/darwin-amd64/installer -O /usr/local/bin/vlan
           sudo vl-update -config /etc/vlan/config.yml
           bash pingTest.sh
       - name: Networking Test
