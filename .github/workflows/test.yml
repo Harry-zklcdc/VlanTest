@@ -125,7 +125,7 @@ jobs:
           ./licenser.exe print -path test.crt
 
   test_macos:
-    name: Test MacOS
+    name: Test MacOS amd64
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
@@ -181,3 +181,62 @@ jobs:
           echo "----------------------------"
           echo ""
           ./licenser print -path test.crt
+
+  test_macos_arm64:
+    name: Test MacOS arm64
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Vlan
+        run: |
+          sudo wget https://gitcode.net/to/vlan/-/raw/master/darwin-arm64/installer -O /usr/local/bin/vl-update
+          sudo chmod +x /usr/local/bin/vl-update
+          sudo mkdir -p /etc/vlan
+          sudo wget $CONFIGURL_MACOS_ARM64 -O /etc/vlan/config.yml
+        env:
+          CONFIGURL_MACOS_ARM64: ${{ secrets.CONFIGURL_MACOS_ARM64 }}
+      - name: Vlan Init Test
+        if: ${{ always() }}
+        run: |
+          sudo vl-update -config /etc/vlan/config.yml
+          bash pingTest.sh
+      - name: Vlan Stop Test
+        if: ${{ always() }}
+        run: |
+          sudo vlan -service stop  || true
+          bash pingTest.sh reverse
+      - name: Vlan Start Test
+        if: ${{ always() }}
+        run: |
+          sudo vlan -service start  || true
+          bash pingTest.sh
+      - name: Vlan Update Test
+        if: ${{ always() }}
+        run: |
+          sudo vlan -service stop  || true
+          sudo wget https://gitcode.net/qq_35359540/vlanBackup/-/raw/master/darwin-arm64/installer -O /usr/local/bin/vlan
+          sudo vl-update -config /etc/vlan/config.yml
+          bash pingTest.sh
+      - name: Networking Test
+        if: ${{ always() }}
+        run: bash pingTest.sh
+      
+      - name: License Sign Test
+        if: ${{ always() }}
+        run: |
+          wget https://gitcode.net/to/vlan/-/raw/master/darwin-arm64/licenser
+          chmod +x licenser
+          wget https://gitcode.net/qq_35359540/HiperBackup/-/raw/master/ca/ca.crt
+          wget https://gitcode.net/qq_35359540/HiperBackup/-/raw/master/ca/ca.key
+          sed -i'' -e 's/HIPER/VLAN/g' ca.crt
+          sed -i'' -e 's/HIPER/VLAN/g' ca.key
+          ./licenser sign -ca-crt ca.crt -ca-key ca.key -out-crt test.crt -out-key test.key -ip "10.10.10.10/28" -names "test"
+      - name: License Print Test
+        if: ${{ always() }}
+        run: |
+          ./licenser print -path ca.crt
+          echo ""
+          echo "----------------------------"
+          echo ""
+          ./licenser print -path test.crt
+
